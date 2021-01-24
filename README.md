@@ -10,14 +10,15 @@ It is easier to have all the variables in one place adn then use jinja plugins t
 Another reason for this is that the output returned from Ansible nested loops is confusing as it shows the whole loop rather than the individual object that was created.
 
 **base.yml**
-Holds the vCentre or standalone HSX hosts that plays are run against as well as default values for file location and VM specifications.
-If the device is vCentre the individual ESX hosts that objects will be created on are defined as *esx_host* variables in the in the *vms.yml* file. *vmware_deploy_ovf* (*vm_from_ovf*) does not support *esxi_hostname* so you cant define which ESX host in vCentre to create the VM on. It installs on first ESX host in vCentre, I think need to use cluster have not added option to playbooks or tested yet.
-If the device is a standalone ESX host *esxi_hostname* is still required in the variables but ignored in the plays.
+Holds the vCentre or standalone HSX hosts that plays are run against as well as default values for file location and VM specifications.\
+If the device is vCentre the individual ESX hosts that objects will be created on are defined as *esx_host* variables in the in the *vms.yml* file. *vmware_deploy_ovf* (*vm_from_ovf*) does not support *esxi_hostname* so you cant define which ESX host in vCentre to create the VM on. It installs on first ESX host in vCentre, I think need to use cluster have not added option to playbooks or tested yet.\
+If the device is a standalone ESX host *esxi_hostname* is still required in the variables but ignored in the plays.\
 The *dflt_vm* values apply if they are not specified in variable file when building VMs from templates (*vm_tmpl*) and ISOs (*vm_iso*)
 The only setting in *dflt_vm* used by OVFs (*vm_ovf*) is *prov_type*
 
+
 | Parent-dict  | Child-dict | Information |
-|---------|-----|-----------|-------------|
+|--------------|-----------|--------------|
 | login | device | vCentre or standalone ESX Host to run the play against |
 | login | user | vCentre or standalone ESX host username |
 | login | pass | vCentre or standalone ESX host password |
