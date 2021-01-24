@@ -9,7 +9,7 @@ All variables for the playbooks are in the vars folder, it doesn't use *host_var
 It is easier to have all the variables in one place adn then use jinja plugins to create the relevant Data Models from these
 Another reason for this is that the output returned from Ansible nested loops is confusing as it shows the whole loop rather than the individual object that was created.
 
-**base.yml**
+**base.yml**\
 Holds the vCentre or standalone HSX hosts that plays are run against as well as default values for file location and VM specifications.\
 If the device is vCentre the individual ESX hosts that objects will be created on are defined as *esx_host* variables in the in the *vms.yml* file. *vmware_deploy_ovf* (*vm_from_ovf*) does not support *esxi_hostname* so you cant define which ESX host in vCentre to create the VM on. It installs on first ESX host in vCentre, I think need to use cluster have not added option to playbooks or tested yet.\
 If the device is a standalone ESX host *esxi_hostname* is still required in the variables but ignored in the plays.\
@@ -34,7 +34,7 @@ The only setting in *dflt_vm* used by OVFs (*vm_ovf*) is *prov_type*
 | dflt_vm | hotadd_cpu | Whether CPU is hot-swappable|
 | dflt_vm | scsi_ctrl | Default SCSI adaptor/controller type |
 
-**port_grps.yml**
+**port_grps.yml**\
 *Object* defines whether this dictionary can be used when creating local vSwitches, distributed vSwitches or both.
 
 | Object  | Key | Mandatory | Information |
@@ -54,10 +54,10 @@ The only setting in *dflt_vm* used by OVFs (*vm_ovf*) is *prov_type*
 | lvs/dvs | port_grp.state | No | *State of the port-grou, if not defined uses the vSwitch state* |
 | dvs | port_grp.num_ports | No | *Number of ports on the DvS, if not defined is 8* |
 
-**vms.yml**
-*Object* defines whether this dictionary can be used when creating VMs from templates (*vm_tmpl*), VM shells with an ISO (*vm_iso*) or from OVFs (*vm_ovf*).
-*MP* means the object can be defined at multiple points within the variable file with the lowest point taking precedence. For example, defining the *state* under the DC applies to all VMs in the DC, if also defined under a template it would be overridden for those devices using that template and if defined under the VM both DC and template would be overridden for that specific VM.
-If a Multi-point (*MP*) object is mandatory it must be defined in at least one location.
+**vms.yml**\
+*Object* defines whether this dictionary can be used when creating VMs from templates (*vm_tmpl*), VM shells with an ISO (*vm_iso*) or from OVFs (*vm_ovf*).\
+*MP* means the object can be defined at multiple points within the variable file with the lowest point taking precedence. For example, defining the *state* under the DC applies to all VMs in the DC, if also defined under a template it would be overridden for those devices using that template and if defined under the VM both DC and template would be overridden for that specific VM.\
+If a Multi-point (*MP*) object is mandatory it must be defined in at least one location.\
 Optional (*Mandatory No*) only need defining when changing the default value.
 
 | Object  | Key | Mandatory | Information |
@@ -71,7 +71,7 @@ Optional (*Mandatory No*) only need defining when changing the default value.
 | tmpl | dns_suffix | MP No | *The DNS suffix for all VMs* |
 
 The main difference between TMPL, ISO and OVF data models is the *type* dictionary. TMPL groups the parameters based on the template, ISO groups them based on the guest OS and OVF groups them based on the OVF template.\
-Under this grouping the VM parameters can be applied for all VMs that would be created from this object (for example all VMs built for ma specific template) and/or override this and define the VM parameters under each individual VM.
+Under this grouping the VM parameters can be applied for all VMs that would be created from this object (for example all VMs built for ma specific template) and/or override this and define the VM parameters under each individual VM.\
 OVF does no allow any of the hardware parameters to be change except for HDD provisioning type (*prov_type*), thin or thick. It doesn't have *port_grp*, instead *network* is a dictionary of dictionaries {vnic_name: port-group}.
 
 | Object  | Key | Mandatory | Information |
@@ -99,8 +99,8 @@ OVF does no allow any of the hardware parameters to be change except for HDD pro
 | tmpl/iso | type.scsi_ctrl | MP No | *Set the iSCSI controller* |
 | ovf | type.network | MP No | *Dictionaries of {vnic_name: port-group}* |
 
-When deploying ISOs upto 4 NICs can be defined, although the the last 3 can only be done so under the VM.
-IP, mask and gateway can only be used if deploying a template.
+When deploying ISOs upto 4 NICs can be defined, although the the last 3 can only be done so under the VM.\
+IP, mask and gateway can only be used if deploying a template.\
 OVF properties (Key:value pair) can be injected in through VMware Tools (never tried). These parameters are specific to the ovf, need to open the ovf file in a text editor to determine what these values should be, you will. Alternatively deploy it and then look in vApp Options >> environment.
 
 | Object  | Key | Mandatory | Information |
@@ -179,6 +179,6 @@ ip, mask, gateway, hostname, domain, dns_servers, dns_suffix
 
 ### TODO
 
-Upgrade Ansible to 2.10 and convert these playbooks to use collections
-Add cluster option to all the roles and test deploying using cluster.
+Upgrade Ansible to 2.10 and convert these playbooks to use collections.\
+Add cluster option to all the roles and test deploying using cluster.\
 Try injecting values using vApps in *vmware_guest >> vapp_properties* (not added to *vm_iso* role yet) and *vmware_deploy_ovf >> properties* (already in *vm_ovf* role).
