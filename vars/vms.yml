@@ -1,0 +1,98 @@
+---
+# Data Model for deploying VMs from templates
+vm_tmpl:
+  - dc: HME
+    ## These mandatory parameters can be set in DC, template or VMs, VMs take precedence
+    ds: ds1
+    esx_host: 10.10.10.51
+    domain: stesworld.com
+    dns_svrs: [10.10.20.254, 8.8.8.8]
+    dns_suffix: [stesworld.com]
+    state: poweredon
+    type:
+      ## Example defining variables under template of all VMs built from that template
+      - tmpl: "cos8_tmpl"
+        ds: ds2
+        esx_host: 10.10.10.52
+        timezone: Europe/London
+        dir: linux
+        hdd: 32
+        mem: 2048
+        cpu: 1
+        port_grp: HME_TRUST_VL20
+        vms:
+          - name: hme-cos-ws01
+            ## Only need if not using DHCP
+            ip: 10.10.20.151
+            netmask: 255.255.255.0
+            gw: 10.10.20.1
+      ## Example defining variables under template of all VMs built from that template
+      - tmpl: "win10_tmpl"
+        vms:
+          - name: hme-win-ws01
+            dir: windows
+            timezone: 085
+            hdd: 64
+            mem: 4096
+            cpu: 1
+            port_grp: HME_TRUST_VL20
+            ip: 10.10.20.152
+            netmask: 255.255.255.0
+            gw: 10.10.20.1
+
+# Data Model for deploying VMs from ISOs
+vm_iso:
+  - dc: HME
+    ## These mandatory parameters can be set in DC, template or VMs, VMs take precedence
+    ds: ds1
+    state: absent
+    type:
+      ## Example defining variables under type of all VMs of that type
+      - os_id: windows9_64Guest    # Is actually win10 https://code.vmware.com/apis/358/doc/vim.vm.GuestOsDescriptor.GuestOsIdentifier.html
+        image: en-uk_windows_10_enterprise_ltsc_2019_x64_dvd_723dfbc1.iso
+        ds: ds1
+        esx_host: 10.10.10.51
+        dir: windows
+        hdd: 32
+        mem: 4096
+        cpu: 1
+        port_grp: HME_TRUST_VL20
+        vms:
+        - name: hme-win-ws02
+      ## Example defining variables under VM for each individual VM
+      - os_id: rhel7_64Guest
+        vms:
+          - name: hme-cos-ws02
+            esx_host: 10.10.10.52
+            ds: ds2
+            hdd: 16
+            mem: 2048
+            cpu: 1
+            port_grp: HME_UNTRUST_VL30
+            port_grp2: HME_TRUST_VL20
+            port_grp3: VM Network
+            image: "CentOS-8.2.2004-x86_64-dvd1.iso"
+            dir: linux
+
+# Data Model for deploying VMs from OVFs
+vm_ovf:
+  # Devices hosted on ET (DC0) ESX host
+  - dc: HME
+    ## These mandatory parameters can be set in DC, template or VMs, VMs take precedence
+    ds: ds1
+    state: on
+    type:
+      ## Example defining variables under type of all VMs of that type
+      - ovf: BIGIP-14.1.3.1-0.0.8.ALL-vmware.ova
+        state: on
+        dir: network
+        prov_type: thin
+        network:
+          Management: HME_COMPUTE_VL10
+          Internal: HME_COMPUTE_VL10
+          External: HME_TRUST_VL20
+          HA: VM Network
+        vms:
+        - name: hme-f5-bip02
+          # ovf_prop:
+          #   vami.hostname: vmware-vidm.sgroot.local

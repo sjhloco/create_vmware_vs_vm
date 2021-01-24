@@ -1,0 +1,22 @@
+### Role to create an emtpy shell of a VM with the ISO loaded
+- name: VMW >> Creating empty Virtual Machine shell with ISO loaded
+  vmware_guest:
+    hostname: "{{ login.device }}"
+    username: "{{ login.user }}"
+    password: "{{ login.pass }}"
+    validate_certs: false
+    datacenter: "{{ item.dc }}"
+    esxi_hostname: "{{ item.esx_host }}"
+    datastore: "{{ item.ds }}"
+    folder: "{{ item.dir }}"
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+    guest_id: "{{ item.os_id }}"
+    hardware: "{{ item.hardware | default(omit) }}"
+    disk: "{{ item.disk | default(omit) }}"
+    networks: "{{ item.network }}"
+    cdrom:
+      iso_path: "{{ item.image | default(omit) }}"
+      type: "{{ 'iso' if item.image is defined else 'client' }}"    # Conditional on item.image being present
+    force: yes                                                      # Needed if state is absent and VM powered om
+  loop: "{{ flt_vm_iso }}"

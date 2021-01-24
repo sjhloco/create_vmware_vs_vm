@@ -1,0 +1,49 @@
+---
+# VSwitches and port-groups to be created, deleted or edited
+
+# List of each LVS and the member port-groups
+lvs:
+  - name: iSCSI
+    esx_host: [10.10.10.51, 10.10.10.52]    # Can be entered as a string or list
+    # mtu: 9000                             # Defaults to 1500 if not defined
+    state: present
+    port_grp:
+      - name: HME_VMK0_VL5
+        vlan: 5
+        state: present                      # If undefined uses the LvS state
+      - name: HME_COMPUTE_VL10
+        vlan: 10
+      # - name: HME_TRUNK
+      #   vlan: 4095                        # Trunks all VLANs (cant do ranges on LvS)
+      #   trunk: True                       # Only required if is trunk
+      #   state: absent                     # To remove a VLAN
+
+# List of each DVS and the member port groups
+dvs:
+  - name: HME_DVS
+    dc: HME
+    num_uplinks: 2                  # Defaults to 4 if not defined
+    # mtu: 9000                     # Defaults to 1500 if not defined
+    discovery_ptcl: lldp            # Defaults to CDP if not defined
+    discovery_oper: both            # Defaults to listen if not defined
+    state: present
+    port_grp:
+      - name: HME_COMPUTE_VL10
+        vlan: 10
+        num_ports: 16               # Defaults to 8 if not set
+        state: present              # If undefined uses the LvS state
+      - name: HME_TRUST_VL20
+        vlan: 20
+        num_ports: 16
+      - name: HME_UNTRUST_VL30
+        vlan: 30
+        num_ports: 16
+      - name: HME_TRANSIT_ASA_VL98
+        vlan: 98
+      - name: HME_INET_VL99
+        vlan: 99
+      - name: HME_TRUNK
+        vlan: 0-4094              # Defines VLANs to be trunked
+        trunk: True               # Only required if is trunk
+
+

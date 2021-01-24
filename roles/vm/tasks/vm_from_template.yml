@@ -1,0 +1,27 @@
+- name: VMW >> Creating Virtual Machines from templates
+  vmware_guest:
+    hostname: "{{ login.device }}"
+    username: "{{ login.user }}"
+    password: "{{ login.pass }}"
+    validate_certs: false
+    datacenter: "{{ item.dc }}"
+    esxi_hostname: "{{ item.esx_host }}"
+    datastore: "{{ item.ds }}"
+    folder: "{{ item.dir }}"
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+    template: "{{ item.tmpl }}"
+    # Omit ensures the dictionary is not used if it is empty
+    hardware: "{{ item.hardware | default(omit) }}"
+    disk: "{{ item.disk | default(omit) }}"
+    networks: "{{ item.network }}"
+    customization:
+      hostname: "{{ item.name }}"
+      domain: "{{ item.domain | default(omit) }}"
+      dns_servers: "{{ item.dns_svrs | default(omit) }}"
+      dns_suffix: "{{ item.dns_suffix | default(omit) }}"
+      timezone: "{{ item.timezone | default(omit) }}"     # Uses different form at for Linux and windows
+      wait_for_customization: yes
+      wait_for_ip_address: True
+    force: yes                                # Needed if state is absent and VM powered om
+  loop: "{{ flt_vm_tmpl }}"

@@ -1,0 +1,61 @@
+---
+- name: "VMware VM deployments"
+  hosts: localhost
+
+  vars_files:
+    - vars/base.yml
+    - vars/port_grps.yml
+    - vars/vms.yml
+
+  ## Uses plugin to create new per VM DMs form the input variables
+  pre_tasks:
+    - name: SYS >> Create LvS DM
+      set_fact:
+        flt_lvs: "{{ lvs |vs_dm() }}"
+      tags: lvs
+    - name: SYS >> Create DvS DM
+      set_fact:
+        flt_dvs: "{{ dvs |vs_dm() }}"
+      tags: dvs
+
+    - name: SYS >> Create VM from template DM
+      set_fact:
+        flt_vm_tmpl: "{{ vm_tmpl |vm_dm(dir.tmpl, dflt_vm) }}"
+      tags: vm_tmpl
+    - name: SYS >> Create VM from iso DM
+      set_fact:
+        flt_vm_iso: "{{ vm_iso |vm_dm(dir.iso, dflt_vm) }}"
+      tags: vm_iso
+    - name: SYS >> Create VM from ovf DM
+      set_fact:
+        flt_vm_ovf: "{{ vm_ovf |vm_dm(dir.ovf, dflt_vm) }}"
+      tags: vm_ovf
+
+  ## Runs the roles using the per VM DMs created from plugins in pre-task
+  tasks:
+    - name: Create Local vSwitch
+      import_role:
+        name: vs_portgrp
+        tasks_from: lvs_portgrp
+      tags: lvs
+    - name: Create Distributed vSwitch
+      import_role:
+        name: vs_portgrp
+        tasks_from: dvs_portgrp
+      tags: dvs
+
+    - name: Create Virtual Machines from Templates
+      import_role:
+        name: vm
+        tasks_from: vm_from_template
+      tags: vm_tmpl
+    - name: Create Virtual Machines with ISO
+      import_role:
+        name: vm
+        tasks_from: vm_with_iso
+      tags: vm_iso
+    - name: Create Virtual Machines from OVF
+      import_role:
+        name: vm
+        tasks_from: vm_from_ovf
+      tags: vm_ovf

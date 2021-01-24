@@ -1,0 +1,24 @@
+### Role to deploy a VM from a template or cloned VM
+- name: VMW >> Creating Virtual Machines shell from an OVF/OVA
+  vmware_deploy_ovf:
+    hostname: "{{ login.device }}"
+    username: "{{ login.user }}"
+    password: "{{ login.pass }}"
+    validate_certs: false
+    datacenter: "{{ item.dc }}"
+    # cluster: "{{ item.esx_host }}"        # Need to add cluster in filter_plugin as cant use esxi_hostname
+    datastore: "{{ item.ds }}"
+    folder: "{{ item.dir }}"
+    name: "{{ item.name }}"
+    ovf: "{{ item.ovf }}"
+    disk_provisioning: "{{ item.disk | default(omit) }}"
+    networks: "{{ item.network | default(omit) }}"
+    power_on: "{{ item.state | default(omit) }}"
+    fail_on_spec_warnings: yes
+    wait: yes
+    wait_for_ip_address: yes
+    # Inject the OVF properties (Key:value pair) through VMware Tools (never tried, need to get values from OVF)
+    inject_ovf_env: "{{ item.inj_prop | default(omit) }}"
+    properties: "{{ item.ovf_prop | default(omit) }}"
+  loop: "{{ flt_vm_ovf }}"
+

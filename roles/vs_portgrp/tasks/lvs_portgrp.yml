@@ -1,0 +1,28 @@
+
+# Creates each of the LVS
+- name: VMW >> Creating Local vSwitches
+  vmware_vswitch:
+    hostname: "{{ login.device }}"
+    username: "{{ login.user }}"
+    password: "{{ login.pass }}"
+    validate_certs: false
+    esxi_hostname: "{{ item.esx_host_or_dc }}"
+    switch_name: "{{ item.name }}"
+    state: "{{ item.state }}"
+    # Omit ensures the dictionary is not used if it is empty
+    mtu: "{{ item.mtu | default(omit) }}"
+  loop: "{{ flt_lvs.all_lvs }}"
+
+# Creates each of the port-groups within each LVS
+- name: VMW >> Creating LvS vlan portgroups
+  vmware_portgroup:
+    hostname: "{{ login.device }}"
+    username: "{{ login.user }}"
+    password: "{{ login.pass }}"
+    validate_certs: false
+    esxi_hostname: "{{ item.esx_host_or_dc }}"
+    switch_name: "{{ item.vs_name }}"
+    portgroup_name: "{{ item.grp_name }}"
+    vlan_id: "{{ item.vlan }}"
+    state: "{{ item.state }}"
+  loop: "{{ flt_lvs.all_grp }}"

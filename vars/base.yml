@@ -1,0 +1,42 @@
+---
+################ Login and Ansible settings (normally would be in all.yml) ################
+# Python location on the Ansible host (operating system specific)
+ansible_python_interpreter: "/usr/bin/env python"
+
+login:
+  device: 10.20.10.61
+  user: ste@stesworld.com
+  pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63353138313661383161636235366631613865343362346439366339626533633633616339613664
+          3061616565373362613230396562373064343339366663660a323262376265663036306436333336
+          31396433626565343539346339656134636332396637373338616337343461613638336638353166
+          6632376130383135320a343739393735336461333365363138373264386364656432336339653262
+          3962
+  # device: 10.10.10.51
+  # user: root
+  # pass: !vault |
+          # $ANSIBLE_VAULT;1.1;AES256
+          # 63353138313661383161636235366631613865343362346439366339626533633633616339613664
+          # 3061616565373362613230396562373064343339366663660a323262376265663036306436333336
+          # 31396433626565343539346339656134636332396637373338616337343461613638336638353166
+          # 6632376130383135320a343739393735336461333365363138373264386364656432336339653262
+          # 3962
+
+# Locations where templates or ISO are stored. The file name is added to this location when plays are run
+dir:
+  tmpl: /HME/vm/templates
+  iso: '[ds1]/iso'
+  ovf: "{{ lookup('env','HOME') }}/ovf"
+
+# Default values used for creating VMs from template or ISO
+dflt_vm:
+  port_grp: VM Network
+  hdd: 32
+  prov_type: thin
+  mem: 2048
+  cpu: 1
+  scsi_ctrl: paravirtual
+  hotadd_mem: True
+  hotadd_cpu: True
+
