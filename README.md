@@ -79,11 +79,12 @@ Multi-point (*MP*) means the object can be defined at multiple points within the
 The main difference between TMPL, ISO and OVF data models is the *type* dictionary. TMPL groups the parameters based on the template, ISO groups them based on the guest OS and OVF groups them based on the OVF template.\
 Under this grouping the VM parameters can be applied for all VMs that would be created from this object (for example all VMs built from a specific template) and/or override this and define the VM parameters under each individual VM.
 
-OVF does not allow any of the hardware parameters to be change except for HDD provisioning type (*prov_type*), *thin* or *thick*. It doesn't have the *port_grp* dictionary, instead *network* is a dictionary of dictionaries *{vnic_name: port-group}*.
+OVF does not allow any of the hardware parameters to be change except for HDD provisioning type (*prov_type*), *thin* or *thick*./
+OVF doesn't have the *port_grp* dictionary, instead *network* is a dictionary of dictionaries *{vnic_name: port-group}* with the *vnic_name* matching that within the OVF. The network dictionary can be defined under *type* or *VM*, if defined in both the dictonaries are merged and if are any conflicting dictionaries the VM value is used.
 
 | Object  | Key | Mandatory | Information |
 |---------|-----|-----------|-------------|
-| tmpl/iso/ovf | type | Yes | *List of templates or OS IDs which contain the VMs to be created* |
+| tmpl/iso/ovf | type | Yes | *List of templates, OS_IDs or OVFs containing the VMs to be created* |
 | tmpl | type.tmpl | Yes | *VM template used to build the VMs* |
 | iso | type.os_id | Yes | *Operating system type used to build the VMs* |
 | iso | type.image | MP No | *The ISO image loaded at VM startup* |
@@ -98,7 +99,7 @@ OVF does not allow any of the hardware parameters to be change except for HDD pr
 | tmpl/iso/ovf | type.dir | MP No | *vCentre folder in which to build all the VMs* |
 | tmpl/iso | type.port_grp | MP No | *Port-group the VMs are in* |
 | tmpl/iso | type.hdd | MP No | *Hardrive size in GB* |
-| tmpl/iso/ovf | type.prov_type | MP No | *The HDD provisioning type* |
+| tmpl/iso/ovf | type.prov_type | MP No | *The HDD provisioning type (thin, thick, etc)* |
 | tmpl/iso | type.mem | MP No | *Memory size in GB* |
 | tmpl/iso | type.hotadd_mem | MP No | *Memory is hot-swappable* |
 | tmpl/iso | type.cpu | MP No | *Number of vCPUs* |
@@ -106,14 +107,15 @@ OVF does not allow any of the hardware parameters to be change except for HDD pr
 | tmpl/iso | type.scsi_ctrl | MP No | *Set the iSCSI controller* |
 | ovf | type.network | MP No | *Dictionaries of {vnic_name: port-group}* |
 
-When deploying ISOs upto 4 NICs can be defined, although the the last 3 can only be done so under the VM.\
-IP, mask and gateway can only be used if deploying a template.\
-OVF properties (Key:value pair) can be injected in through VMware Tools (never tried). These parameters are specific to the ovf, need to open the ovf file in a text editor to determine what these values should be, you will. Alternatively deploy it and then look in vApp Options >> environment.
+When deploying ISOs upto 4 vNICs can be defined. vNIC1 can be defined under the template or VM, the other 3 can only be defined under the VM.\
+IP address, subnet mask and default gateway can only be used if deploying a template.
+
+OVF properties (*Key:value* pair) can be injected in through VMware Tools (have never tried). These parameters are specific to the ovf, to find the correct key name either open the ovf file in a text editor or deploy the OVF and look in *vApp Options >> environment*. 
 
 | Object  | Key | Mandatory | Information |
 |---------|-----|-----------|-------------|
-| tmpl/iso | type.vms | Yes | *List of VMs to be created* |
-| tmpl/iso | type.vms.name | Yes | *Name of the VM* |
+| tmpl/iso/ovf | type.vms | Yes | *List of VMs to be created* |
+| tmpl/iso/ovf | type.vms.name | Yes | *Name of the VM* |
 | tmpl | type.vms.ip | No | *VMs IP addressed. If defined the GW and mask must also be defined* |
 | tmpl | type.vms.netmask | No | *VMs subnet mask. If defined the IP and GWk must also be defined* |
 | tmpl | type.vms.gw | No | *VMs default gateway. If defined the IP and mask must also be defined* |
@@ -121,22 +123,22 @@ OVF properties (Key:value pair) can be injected in through VMware Tools (never t
 | iso | type.vms.port_grp2 | No | *Port-group for NIC2 on the the server is in* |
 | iso | type.vms.port_grp3 | No | *Port-group for NIC3 on the the server is in* |
 | iso | type.vms.port_grp4 | No | *Port-group for NIC4 on the the server is in* |
-| tmpl/iso | type.vms.esx_host | MP Yes | *Takes precedence over DC and template setting* |
-| tmpl/iso | type.vms.ds | MP Yes | *Takes precedence over DC and template setting* |
-| tmpl/iso | type.vms.state | MP Yes | *Takes precedence over DC and template setting* |
-| tmpl/iso | type.vms.dir | MP No | *Takes precedence over DC and template setting* |
-| tmpl | type.vms.domain | MP Yes | *Takes precedence over DC and template setting* |
-| tmpl | type.vms.dns_svrs | MP Yes | *Takes precedence over DC and template setting* |
-| tmpl | type.vms.dns_suffix | MP Yes | *Takes precedence over DC and template setting* |
-| tmpl | type.vms.timezone | MP Yes | *Takes precedence over DC and template setting* |
+| tmpl/iso | type.vms.esx_host | MP Yes | *Takes precedence over DC and type setting* |
+| tmpl/iso/ovf | type.vms.ds | MP Yes | *Takes precedence over DC and type setting* |
+| tmpl/iso/ovf | type.vms.state | MP Yes | *Takes precedence over DC and type setting* |
+| tmpl/iso/ovf | type.vms.dir | MP No | *Takes precedence over DC and type setting* |
+| tmpl | type.vms.domain | MP Yes | *Takes precedence over DC and template type setting* |
+| tmpl | type.vms.dns_svrs | MP Yes | *Takes precedence over DC and template type setting* |
+| tmpl | type.vms.dns_suffix | MP Yes | *Takes precedence over DC and template type setting* |
+| tmpl | type.vms.timezone | MP Yes | *Takes precedence over DC and template type setting* |
 | iso | type.vms.image | MP No | *Takes precedence over DC and OS type setting* |
-| tmpl/iso | type.vms.port_grp | MP No | *Takes precedence over DC and OS type setting* |
-| tmpl/iso | type.vms.hdd | MP No | *Takes precedence over DC and OS type setting* |
-| tmpl/iso | type.vms.prov_type | MP No | *Takes precedence over DC and OS type setting* |
+| tmpl/iso | type.vms.port_grp | MP No | *Takes precedence over DC and type setting* |
+| tmpl/iso | type.vms.hdd | MP No | *Takes precedence over DC and type setting* |
+| tmpl/iso/ovf | type.vms.prov_type | MP No | *Takes precedence over DC and type setting* |
 | tmpl/iso | type.vms.mem | MP No | *Takes precedence over DC and OS type setting* |
 | tmpl/iso | type.vms.cpu | MP No | *Takes precedence over DC and OS type setting* |
 | tmpl/iso | type.vms.scsi_ctrl | MP No | *Takes precedence over DC and OS type setting* |
-| ovf | type.vms.network| MP No | *Dictionaries of {vnic_name: port-group}* |
+| ovf | type.vms.network| MP No | *Merges with OVF type, takes precedence over conflicting keys* |
 | ovf | type.vms.ovf_prop | No | *Dictionaries of OVF properties* |
 
 ## Roles
@@ -160,29 +162,24 @@ A prerequisite to running these Ansible VMware plays is to instal *PyVmomi* on t
 
 The playbook can be run with any of the following tags:
 
-**--tag lvs:** Creates Local vSwitches as defined by the *lvs* dictionary in *port_grps.yml*.\
-**--tag dvs:** Creates Distributed vSwitches as defined by the *dvs* dictionary in *port_grps.yml*.\
-**--tag vm_tmpl:** Creates VMs from a template as defined by the *vm_tmpl* dictionary in *vms.yml*.\
-**--tag vm_iso:** Creates VM shell (with optional image) as defined by the *vm_iso* dictionary in *vms.yml*.\
-**--tag vm_ovf:** Creates VMs from an OVF as defined by the *vm_ovf* dictionary in *vms.yml*.
+**--tag lvs:** Creates Local vSwitches as defined by the ***lvs*** dictionary in ***port_grps.yml***.\
+**--tag dvs:** Creates Distributed vSwitches as defined by the ***dvs*** dictionary in ***port_grps.yml***.\
+**--tag vm_tmpl:** Creates VMs from a template as defined by the ***vm_tmpl*** dictionary in ***vms.yml***.\
+**--tag vm_iso:** Creates VM shell (with optional image) as defined by the ***vm_iso*** dictionary in ***vms.yml***.\
+**--tag vm_ovf:** Creates VMs from an OVF as defined by the ***vm_ovf*** dictionary in ***vms.yml***.
 
 ## Caveats
 
+A few things couldnt get to work properly. Not sure how much of thme can be fixed, not really essential in lab but would nice to workout at some point.
 
-!!!!!! REWRITE CAVEATS, CHNAGE PASSWORD TO BE VAULT, ADD TO GITHUB !!!!!!!!
+**CentOS & Win10**
+- MAC address: Doesnt work, always gets a random MAC address
+- Timezone: Doesnt work, always uses the template setting
+- scsi_ctrl: Doesnt work, always uses the template setting
+- prov_type: Doesnt work, always uses the template setting
 
-
-A few things couldnt get to work properly. Not essential in lab but would be good to fix at somepoint
-
-Doesnt work on any:
-mac: Deleted HWADDR and UUID from template but it still gets random AMC address
-Timezone: Doesnt work, always uses the template setting
-scsi_ctrl: Doesnt work, always uses the template setting
-prov_type: Doesnt work, always uses the template setting
-
-WIN10
-customization: None of these work as need to run sysprep but if do that have to setup user each time:
-ip, mask, gateway, hostname, domain, dns_servers, dns_suffix
+**Win10**
+- customization: ip, mask, gateway, hostname, domain, dns_servers, dns_suffix dont work as need to run *sysprep* but if do that have to setup user each time.
 
 ## TODO
 
