@@ -80,7 +80,7 @@ The main difference between TMPL, ISO and OVF data models is the *type* dictiona
 Under this grouping the VM parameters can be applied for all VMs that would be created from this object (for example all VMs built from a specific template) and/or override this and define the VM parameters under each individual VM.
 
 OVF does not allow any of the hardware parameters to be change except for HDD provisioning type (*prov_type*), *thin* or *thick*./
-OVF doesn't have the *port_grp* dictionary, instead *network* is a dictionary of dictionaries *{vnic_name: port-group}* with the *vnic_name* matching that within the OVF. The network dictionary can be defined under *type* or *VM*, if defined in both the dictonaries are merged and if are any conflicting dictionaries the VM value is used.
+OVF doesn't have the *port_grp* dictionary, instead *network* is a dictionary of dictionaries *{vnic_name: port-group}* with the *vnic_name* matching that within the OVF. The network dictionary can be defined under *type* or *VM*, if defined in both the dictionaries are merged and if are any conflicting dictionaries the VM value is used.
 
 | Object  | Key | Mandatory | Information |
 |---------|-----|-----------|-------------|
@@ -110,7 +110,7 @@ OVF doesn't have the *port_grp* dictionary, instead *network* is a dictionary of
 When deploying ISOs upto 4 vNICs can be defined. vNIC1 can be defined under the template or VM, the other 3 can only be defined under the VM.\
 IP address, subnet mask and default gateway can only be used if deploying a template.
 
-OVF properties (*Key:value* pair) can be injected in through VMware Tools (have never tried). These parameters are specific to the ovf, to find the correct key name either open the ovf file in a text editor or deploy the OVF and look in *vApp Options >> environment*. 
+OVF properties (*Key:value* pair) can be injected in through VMware Tools (have never tried). These parameters are specific to the ovf, to find the correct key name either open the ovf file in a text editor or deploy the OVF and look in *vApp Options >> environment*.
 
 | Object  | Key | Mandatory | Information |
 |---------|-----|-----------|-------------|
@@ -173,12 +173,14 @@ The playbook can be run with any of the following tags:
 A few things couldnt get to work properly. Not sure how much of thme can be fixed, not really essential in lab but would nice to workout at some point.
 
 **CentOS & Win10**
-- MAC address: Doesnt work, always gets a random MAC address
-- Timezone: Doesnt work, always uses the template setting
-- scsi_ctrl: Doesnt work, always uses the template setting
-- prov_type: Doesnt work, always uses the template setting
+
+- MAC address: Doesn't work, always gets a random MAC address
+- Timezone: Doesn't work, always uses the template setting
+- scsi_ctrl: Doesn't work, always uses the template setting
+- prov_type: Doesn't work, always uses the template setting
 
 **Win10**
+
 - customization: ip, mask, gateway, hostname, domain, dns_servers, dns_suffix dont work as need to run *sysprep* but if do that have to setup user each time.
 
 ## TODO
