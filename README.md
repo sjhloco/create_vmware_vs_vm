@@ -79,7 +79,7 @@ Multi-point (*MP*) means the object can be defined at multiple points within the
 The main difference between TMPL, ISO and OVF data models is the *type* dictionary. TMPL groups the parameters based on the template, ISO groups them based on the guest OS and OVF groups them based on the OVF template.\
 Under this grouping the VM parameters can be applied for all VMs that would be created from this object (for example all VMs built from a specific template) and/or override this and define the VM parameters under each individual VM.
 
-OVF does no allow any of the hardware parameters to be change except for HDD provisioning type (*prov_type*), *thin* or *thick*. It doesn't have the *port_grp* dictionary, instead *network* is a dictionary of dictionaries *{vnic_name: port-group}*.
+OVF does not allow any of the hardware parameters to be change except for HDD provisioning type (*prov_type*), *thin* or *thick*. It doesn't have the *port_grp* dictionary, instead *network* is a dictionary of dictionaries *{vnic_name: port-group}*.
 
 | Object  | Key | Mandatory | Information |
 |---------|-----|-----------|-------------|
