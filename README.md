@@ -6,25 +6,25 @@ This has been tested on Ansible 2.8.4. At some point needs to be ported to 2.10 
 ### Variables
 
 All variables for the playbooks are in the vars folder, it doesn't use *host_vars* or *group_vars*.
-It is easier to have all the variables in one place adn then use jinja plugins to create the relevant Data Models from these
-Another reason for this is that the output returned from Ansible nested loops is confusing as it shows the whole loop rather than the individual object that was created.
+It is easier to have all the variables in one place and then use jinja plugins to create the relevant Data Models from these.
+Another reason for this is that the output returned on screen from Ansible nested loops is confusing as it shows the whole loop rather than just the individual parameters for the  object that was created.
 
 **base.yml**\
-Holds the vCentre or standalone HSX hosts that plays are run against as well as default values for file location and VM specifications.\
-If the device is vCentre the individual ESX hosts that objects will be created on are defined as *esx_host* variables in the in the *vms.yml* file. *vmware_deploy_ovf* (*vm_from_ovf*) does not support *esxi_hostname* so you cant define which ESX host in vCentre to create the VM on. It installs on first ESX host in vCentre, I think need to use cluster have not added option to playbooks or tested yet.\
-If the device is a standalone ESX host *esxi_hostname* is still required in the variables but ignored in the plays.\
-The *dflt_vm* values apply if they are not specified in variable file when building VMs from templates (*vm_tmpl*) and ISOs (*vm_iso*)
-The only setting in *dflt_vm* used by OVFs (*vm_ovf*) is *prov_type*
+The vCentre or standalone ESX host plays are run against, default directory locations and default VM specifications.
 
+If run against vCentre the individual ESX hosts that objects will be created on are defined with the *esx_host* variable in the in the *vms.yml* file. When deploying an OVF (*vm_from_ovf*) cant specify *esx_host* as *vmware_deploy_ovf* does not support it. The VM is built on the first ESX host in vCentre, I think need to use cluster have not added option to playbooks or tested yet.\
+If the device is a standalone ESX host *esxi_host* is still required in the *vms.yml* variable file but ignored in the plays.
+
+*dflt_vm* values apply if they are not specified in variable file when building VMs from templates (*vm_tmpl*) and ISOs (*vm_iso*). The only setting in *dflt_vm* used by OVFs (*vm_ovf*) is *prov_type*.
 
 | Parent-dict  | Child-dict | Information |
 |--------------|-----------|--------------|
 | login | device | vCentre or standalone ESX Host to run the play against |
 | login | user | vCentre or standalone ESX host username |
 | login | pass | vCentre or standalone ESX host password |
-| dir | tmpl | Location where templates are stored |
-| dir | iso | Location where ISO images are stored |
-| dir | ovf | Location where OVFs are stored, cant be the DS |
+| dir | tmpl | Location where templates are stored (directory in inventory) |
+| dir | iso | Location where ISO images are stored (in the DS) |
+| dir | ovf | Location where OVFs are stored (cannot be the DS) |
 | dflt_vm | port_grp | Default port-group used |
 | dflt_vm | hdd | Default Hardrive size in GB |
 | dflt_vm | prov_type | Default Hardrive provision type |
@@ -35,23 +35,23 @@ The only setting in *dflt_vm* used by OVFs (*vm_ovf*) is *prov_type*
 | dflt_vm | scsi_ctrl | Default SCSI adaptor/controller type |
 
 **port_grps.yml**\
-*Object* defines whether this dictionary can be used when creating local vSwitches, distributed vSwitches or both.
+*Object* defines whether this dictionary object can be used for creating local vSwitches, distributed vSwitches or both.
 
 | Object  | Key | Mandatory | Information |
 |---------|-----|-----------|-------------|
 | lvs/dvs | name | Yes | *Name of the vSwitch* |
-| dvs | dc | Yes | *DC DvS it is created on. Can either be one DC or a list of DCs* |
+| dvs | dc | Yes | *DC DvS it is created on. Either one DC or a list of DCs* |
 | dvs | num_uplinks | No | *Number of uplinks on the DvS. If not defined is 4* |
 | lvs | esx_host | Yes | *ESX host LvS it is created on. Can either be one host or a list of hosts* |
 | lvs/dvs | mtu | No | *MTU of the vS, if not defined is 1500* |
-| dvs | discovery_ptcl | No | *discovery_protocol of the vS, if not defined is CDP* |
-| dvs | discovery_oper | No | *discovery_operation of the vS, if not defined is listen* |
+| dvs | discovery_ptcl | No | *discovery protocol of the vS, if not defined is CDP* |
+| dvs | discovery_oper | No | *discovery operation of the vS, if not defined is listen* |
 | lvs/dvs | state | Yes | *State of the vSwitch and possibly port-groups (global)* |
-| lvs/dvs | port_grp | No | *List of port-groups. If defined suboptions also required* |
+| lvs/dvs | port_grp | No | *List of port-groups. If defined sub-options also required* |
 | lvs/dvs | port_grp.name | Yes | *Name of the port-group* |
 | lvs/dvs | port_grp.vlan | Yes | *VLAN of the port-group* |
 | lvs/dvs | port_grp.trunk | No | *Required if the the port-group is a trunk* |
-| lvs/dvs | port_grp.state | No | *State of the port-grou, if not defined uses the vSwitch state* |
+| lvs/dvs | port_grp.state | No | *State of the port-group, if not defined uses the vSwitch state* |
 | dvs | port_grp.num_ports | No | *Number of ports on the DvS, if not defined is 8* |
 
 **vms.yml**\
