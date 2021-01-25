@@ -6,7 +6,7 @@ This has been tested on Ansible 2.8.4. At some point needs to be ported to 2.10 
 ### Variables
 
 All variables for the playbooks are in the vars folder, it doesn't use *host_vars* or *group_vars*.
-It is easier to have all the variables in one place and then use jinja plugins to create the relevant Data Models from these.
+It is easier to have all the variables in one place and then use jinja plugins to create the relevant Data Models from these.\
 Another reason for this is that the output returned on screen from Ansible nested loops is confusing as it shows the whole loop rather than just the individual parameters for the  object that was created.
 
 **base.yml**\
