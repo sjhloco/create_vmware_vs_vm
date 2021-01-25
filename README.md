@@ -63,7 +63,7 @@ If the device is a standalone ESX host *esxi_host* is still required in the *vms
 If a Multi-point (*MP*) object is mandatory it must be defined in at least one location.\
 Optional (*Mandatory No*) only need defining when changing the default value.
 
-Multi-point (*MP*) means the object can be defined at multiple points within the variable file with the lowest point taking precedence. For example, defining the *state* under the *DC* applies to all VMs in that DC, if also defined under a *template* it would be overridden for those devices using that template and if defined under the *VM* both the DC and template setting would be overridden for that specific VM.\
+Multi-point (*MP*) means the object can be defined at multiple points within the variable file with the lowest point taking precedence. For example, defining the *state* under the *DC* applies to all VMs in that DC, if also defined under a *template* it would be overridden for those devices using that template and if defined under the *VM* both the DC and template setting would be overridden for that specific VM.
 
 
 | Object  | Key | Mandatory | Information |
