@@ -20,20 +20,20 @@ If the device is a standalone ESX host *esxi_host* is still required in the *vms
 
 | Parent-dict  | Child-dict | Information |
 |--------------|-----------|--------------|
-| login | device | vCentre or standalone ESX Host to run the play against |
-| login | user | vCentre or standalone ESX host username |
-| login | pass | vCentre or standalone ESX host password |
-| dir | tmpl | Location where templates are stored (directory in inventory) |
-| dir | iso | Location where ISO images are stored (in the DS) |
-| dir | ovf | Location where OVFs are stored (cannot be the DS) |
-| dflt_vm | port_grp | Default port-group used |
-| dflt_vm | hdd | Default Hardrive size in GB |
-| dflt_vm | prov_type | Default Hardrive provision type |
-| dflt_vm | 2048 | Default memory in MB |
-| dflt_vm | hotadd_mem | Whether memory is hot-swappable|
-| dflt_vm | 1 | Default number of CPUs |
-| dflt_vm | hotadd_cpu | Whether CPU is hot-swappable|
-| dflt_vm | scsi_ctrl | Default SCSI adaptor/controller type |
+| login | device | *vCentre or standalone ESX Host to run the play against* |
+| login | user | *vCentre or standalone ESX host username* |
+| login | pass | *vCentre or standalone ESX host password* |
+| dir | tmpl | *Location where templates are stored (directory in inventory)* |
+| dir | iso | *Location where ISO images are stored (in the DS)* |
+| dir | ovf | *Location where OVFs are stored (cannot be the DS)* |
+| dflt_vm | port_grp | *Default port-group used* |
+| dflt_vm | hdd | *Default Hardrive size in GB* |
+| dflt_vm | prov_type | *Default Hardrive provision type* |
+| dflt_vm | 2048 | *Default memory in MB* |
+| dflt_vm | hotadd_mem | *Whether memory is hot-swappable* |
+| dflt_vm | 1 | *Default number of CPUs* |
+| dflt_vm | hotadd_cpu | *Whether CPU is hot-swappable* |
+| dflt_vm | scsi_ctrl | *Default SCSI adaptor/controller type* |
 
 ### port_grps.yml
 
@@ -58,14 +58,17 @@ If the device is a standalone ESX host *esxi_host* is still required in the *vms
 
 ### vms.yml
 
-*Object* defines whether this dictionary can be used when creating VMs from templates (*vm_tmpl*), VM shells with an ISO (*vm_iso*) or from OVFs (*vm_ovf*).\
-*MP* means the object can be defined at multiple points within the variable file with the lowest point taking precedence. For example, defining the *state* under the DC applies to all VMs in the DC, if also defined under a template it would be overridden for those devices using that template and if defined under the VM both DC and template would be overridden for that specific VM.\
+*Object* defines whether this dictionary can be used when creating VMs from templates (*vm_tmpl*), VM shells with an ISO (*vm_iso*) or VMs from OVFs (*vm_ovf*).
+
 If a Multi-point (*MP*) object is mandatory it must be defined in at least one location.\
 Optional (*Mandatory No*) only need defining when changing the default value.
 
+Multi-point (*MP*) means the object can be defined at multiple points within the variable file with the lowest point taking precedence. For example, defining the *state* under the *DC* applies to all VMs in that DC, if also defined under a *template* it would be overridden for those devices using that template and if defined under the *VM* both the DC and template setting would be overridden for that specific VM.\
+
+
 | Object  | Key | Mandatory | Information |
 |---------|-----|-----------|-------------|
-| tmpl/iso/ovf | dc | Yes | *Name of the Data Centre* |
+| tmpl/iso/ovf | dc | Yes | *Name of the Data Centre to create the VM* |
 | tmpl/iso | esx_host | MP Yes | *ESX host on which to create all the VMs* |
 | tmpl/iso/ovf | ds | MP Yes | *The Datastore on which to create all the VMs* |
 | tmpl/iso/ovf | state | MP Yes | *State for all VMs* |
@@ -74,8 +77,9 @@ Optional (*Mandatory No*) only need defining when changing the default value.
 | tmpl | dns_suffix | MP No | *The DNS suffix for all VMs* |
 
 The main difference between TMPL, ISO and OVF data models is the *type* dictionary. TMPL groups the parameters based on the template, ISO groups them based on the guest OS and OVF groups them based on the OVF template.\
-Under this grouping the VM parameters can be applied for all VMs that would be created from this object (for example all VMs built for ma specific template) and/or override this and define the VM parameters under each individual VM.\
-OVF does no allow any of the hardware parameters to be change except for HDD provisioning type (*prov_type*), thin or thick. It doesn't have *port_grp*, instead *network* is a dictionary of dictionaries {vnic_name: port-group}.
+Under this grouping the VM parameters can be applied for all VMs that would be created from this object (for example all VMs built from a specific template) and/or override this and define the VM parameters under each individual VM.
+
+OVF does no allow any of the hardware parameters to be change except for HDD provisioning type (*prov_type*), *thin* or *thick*. It doesn't have the *port_grp* dictionary, instead *network* is a dictionary of dictionaries *{vnic_name: port-group}*.
 
 | Object  | Key | Mandatory | Information |
 |---------|-----|-----------|-------------|
